@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor folders
+.vscode/
+.idea/
+
+# Node (if you ever run npm later)
+node_modules/
+npm-debug.log
+
+# Logs
+*.log
