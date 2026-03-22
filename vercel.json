@@ -1,0 +1,36 @@
+{
+  "rewrites": [
+    {
+      "source": "/_components/(.*)",
+      "destination": "/public/_components/$1"
+    },
+    {
+      "source": "/_json/(.*)",
+      "destination": "/public/_json/$1"
+    },
+    {
+      "source": "/_runtimes/(.*)",
+      "destination": "/public/_runtimes/$1"
+    },
+    {
+      "source": "/_assets/(.*)",
+      "destination": "/public/_assets/$1"
+    },
+    {
+      "source": "/_user_fonts/(.*)",
+      "destination": "/public/_user_fonts/$1"
+    },
+    {
+      "source": "/_videos/(.*)",
+      "destination": "/public/_videos/$1"
+    },
+    {
+      "source": "/public/:id",
+      "destination": "/public/pet.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/index.html"
+    }
+  ]
+}
