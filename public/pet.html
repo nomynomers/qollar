@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>PetTag</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --cream: #FDF8F3;
+      --card: #FFFFFF;
+      --teal: #7378f4;
+      --teal-light: #cdcffe;
+      --text: #2D3142;
+      --muted: #8B8FA8;
+      --red-bg: #FFE8E8;
+      --red-txt: #D94F4F;
+      --yellow-bg: #FFF5D6;
+      --yellow-txt: #B07D00;
+      --gray-bg: #F0F1F5;
+      --gray-txt: #5C6079;
+      --radius: 20px;
+      --shadow: 0 4px 24px rgba(45, 49, 66, 0.08);
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--cream);
+      font-family: 'Nunito Sans', sans-serif;
+      color: var(--text);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-color: #f4f4f4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 20px 20px;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      margin-bottom: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(91, 196, 176, 0.4);
+    }
+
+    .logo-text {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 17px;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .logo-text span {
+      color: var(--teal);
+    }
+
+    .lang-btn {
+      background: var(--card);
+      border: 1.5px solid #E8EAF0;
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .lang-btn:hover {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .lang-chevron {
+      font-size: 10px;
+      opacity: 0.5;
+    }
+
+    /* Language dropdown */
+    .lang-wrapper {
+      position: relative;
+    }
+
+    .lang-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--card);
+      border: 1.5px solid #E8EAF0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(45, 49, 66, 0.12);
+      display: none;
+      min-width: 130px;
+      z-index: 99;
+    }
+
+    .lang-dropdown.open {
+      display: block;
+      animation: fadeIn 0.15s ease;
+    }
+
+    .lang-option {
+      padding: 11px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+
+    .lang-option:hover {
+      background: var(--teal-light);
+    }
+
+    .lang-option.active {
+      color: var(--teal);
+    }
+
+    /* ── MAIN CARD ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px 24px 24px;
+      box-shadow: var(--shadow);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .found-pill {
+      align-self: flex-start;
+      background: var(--teal-light);
+      color: var(--teal);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 50px;
+      margin-bottom: 18px;
+    }
+
+    .pet-name {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 42px;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .pet-breed {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    /* ── TAGS ── */
+    .section-label {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    .tag-icon {
+      font-size: 14px;
+    }
+
+    .tag.red {
+      background: var(--red-bg);
+      color: var(--red-txt);
+    }
+
+    .tag.yellow {
+      background: var(--yellow-bg);
+      color: var(--yellow-txt);
+    }
+
+    .tag.gray {
+      background: var(--gray-bg);
+      color: var(--gray-txt);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: #F0F1F5;
+      margin-bottom: 20px;
+    }
+
+    /* ── OWNER ── */
+    .owner-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: auto;
+      padding-bottom: 20px;
+    }
+
+    .owner-info {}
+
+    .owner-label {
+      font-size: 11px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .owner-name {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .owner-phone {
+      font-size: 15px;
+      color: var(--teal);
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: opacity 0.2s;
+    }
+
+    .owner-phone:hover {
+      opacity: 0.75;
+    }
+
+    .call-btn {
+      width: 52px;
+      height: 52px;
+      background: var(--teal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 22px;
+      box-shadow: 0 4px 16px rgba(91, 196, 176, 0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+
+    .call-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(91, 196, 176, 0.5);
+    }
+
+    .call-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* ── PING BUTTON ── */
+    .ping-btn {
+      width: 100%;
+      padding: 17px;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(45, 49, 66, 0.2);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .ping-btn:hover {
+      background: #3d4260;
+      box-shadow: 0 6px 22px rgba(45, 49, 66, 0.28);
+      transform: translateY(-1px);
+    }
+
+    .ping-btn:active {
+      transform: translateY(1px);
+    }
+
+    .ping-btn:disabled {
+      background: var(--teal);
+      cursor: default;
+      transform: none;
+    }
+
+    .ping-icon {
+      font-size: 18px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #2D3142;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 50px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(45, 49, 66, 0.25);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="screen">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <a class="logo" href="#">
+        <div class="logo-icon">🐾</div>
+        <span class="logo-text"><span>Q</span>uolla<span>R</span></span>
+      </a>
+      <div class="lang-wrapper">
+        <button class="lang-btn" id="langBtn" onclick="toggleLang()">
+          <span id="langCode">VI</span>
+          <span class="lang-chevron">▼</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <div class="lang-option active" onclick="setLang('vi','VI')">Tiếng Việt</div>
+          <div class="lang-option" onclick="setLang('en','EN')">English</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="card">
+      <div class="found-pill" id="foundPill">Bạn tìm thấy thú cưng lạc?</div>
+
+      <div class="pet-name" id="petName">Ki Ki</div>
+      <!--<div class="pet-breed" id="petBreed">Golden Retriever · 3 years old</div>-->
+
+      <div class="section-label" id="medLabel">Thông tin sức khỏe</div>
+      <div class="tags">
+        <div class="tag red"><span class="tag-icon">💊</span><span id="tag1">Cần uống thuốc</span></div>
+        <div class="tag yellow"><span class="tag-icon">🔇</span><span id="tag2">Điếc</span></div>
+        <div class="tag gray"><span class="tag-icon">🦴</span><span id="tag3">Loạn sản khớp hông</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="owner-row">
+        <div class="owner-info">
+          <div class="owner-label" id="ownerLabel">Chủ nhân</div>
+          <div class="owner-name" id="ownerName">Nguyễn Văn A</div>
+          <a class="owner-phone" href="tel:+84111111111" id="ownerPhone">📞 +84 111-111-111</a>
+        </div>
+        <a class="call-btn" href="tel:+15550193847" title="Call owner">📞</a>
+      </div>
+
+      <button class="ping-btn" id="pingBtn" onclick="sendLocation()">
+        <span class="ping-icon"></span>
+        <span id="pingText">Gửi vị trí của tôi cho chủ</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── LANGUAGE ──
+    const translations = {
+      en: {
+        found: 'Found a lost pet?',
+        medLabel: 'Medical Info',
+        ownerLabel: 'Owner',
+        tag1: 'Needs Medication',
+        tag2: 'Deaf in left ear',
+        tag3: 'Hip Dysplasia',
+        ping: 'Send My Location to Owner',
+        pinging: 'Getting location…',
+        sent: 'Location sent to A!',
+        denied: 'Location access denied',
+        error: 'Could not get location',
+      },
+      vi: {
+        found: 'Bạn tìm thấy thú cưng lạc?',
+        medLabel: 'Thông tin sức khỏe',
+        ownerLabel: 'Chủ nhân',
+        tag1: 'Cần uống thuốc',
+        tag2: 'Điếc',
+        tag3: 'Loạn sản khớp hông',
+        ping: 'Gửi vị trí của tôi cho chủ',
+        pinging: 'Đang lấy vị trí…',
+        sent: 'Đã gửi vị trí cho A!',
+        denied: 'Bị từ chối quyền vị trí',
+        error: 'Không thể lấy vị trí',
+      }
+    };
+
+    let currentLang = 'vn';
+
+    function toggleLang() {
+      document.getElementById('langDropdown').classList.toggle('open');
+    }
+
+    function setLang(code, label) {
+      currentLang = code;
+      document.getElementById('langCode').textContent = label;
+      document.getElementById('langDropdown').classList.remove('open');
+
+      document.querySelectorAll('.lang-option').forEach(opt => {
+        opt.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+
+      const t = translations[code];
+      document.getElementById('foundPill').textContent = t.found;
+      document.getElementById('medLabel').textContent = t.medLabel;
+      document.getElementById('ownerLabel').textContent = t.ownerLabel;
+      document.getElementById('tag1').textContent = t.tag1;
+      document.getElementById('tag2').textContent = t.tag2;
+      document.getElementById('tag3').textContent = t.tag3;
+      document.getElementById('pingText').textContent = t.ping;
+
+      const btn = document.getElementById('pingBtn');
+      btn.disabled = false;
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.lang-wrapper')) {
+        document.getElementById('langDropdown').classList.remove('open');
+      }
+    });
+
+    // ── LOCATION PING ──
+    function sendLocation() {
+      console.log("Button clicked, function started.");
+      const t = translations[currentLang];
+      const btn = document.getElementById('pingBtn');
+      const pingText = document.getElementById('pingText');
+
+      btn.disabled = true;
+      pingText.textContent = t.pinging;
+
+      if (!navigator.geolocation) {
+        showToast(t.error);
+        btn.disabled = false;
+        pingText.textContent = t.ping;
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          pingText.textContent = t.sent;
+          showToast(mapUrl, true);
+        },
+        (err) => {
+          const msg = err.code === 1 ? t.denied : t.error;
+          showToast(msg);
+          btn.disabled = false;
+          pingText.textContent = t.ping;
+        },
+        { timeout: 10000 }
+      );
+    }
+
+    function showToast(mapUrl, isSuccess = false) {
+      const toast = document.getElementById('toast');
+
+      if (isSuccess) {
+        toast.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="${mapUrl}" target="_blank" style="color: #4db8ff; text-decoration: underline;">View Map</a>
+        <button id="copyBtn" style="background: #444; color: white; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em;">
+          Copy Link
+        </button>
+      </div>
+    `;
+
+        document.getElementById('copyBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(mapUrl).then(() => {
+            const btn = e.target;
+            btn.textContent = "Copied!";
+            btn.style.background = "#28a745";
+          });
+        });
+      } else {
+        toast.textContent = mapUrl;
+      }
+
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 10000);
+    }
+  </script>
+</body>
+
+</html>
